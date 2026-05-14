@@ -47,13 +47,24 @@ export function LoginForm() {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await apiRequest('/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...values,
           captchaToken: DEV_MODE ? 'dev-token' : values.captchaToken,
         }),
       });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(
+          Array.isArray(err?.message)
+            ? err.message.join(', ')
+            : err?.message || 'No fue posible iniciar sesión',
+        );
+      }
 
       toast.success('Sesión iniciada correctamente');
       window.location.href = '/dashboard';

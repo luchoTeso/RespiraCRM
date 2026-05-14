@@ -48,8 +48,10 @@ export function RegisterForm() {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await apiRequest('/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: values.name,
           email: values.email,
@@ -58,9 +60,17 @@ export function RegisterForm() {
         }),
       });
 
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(
+          Array.isArray(err?.message)
+            ? err.message.join(', ')
+            : err?.message || 'No fue posible crear la cuenta',
+        );
+      }
+
       toast.success('Cuenta creada correctamente. ¡Bienvenido!');
-      router.push('/dashboard');
-      router.refresh();
+      window.location.href = '/dashboard';
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'No fue posible crear la cuenta',
