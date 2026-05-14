@@ -216,7 +216,7 @@ export function RegisterForm() {
             </div>
           </div>
 
-          <a
+          <Link
             href="/backend/api/auth/google"
             className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-muted"
           >
