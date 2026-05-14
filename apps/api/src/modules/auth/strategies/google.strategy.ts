@@ -19,6 +19,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         process.env.GOOGLE_CALLBACK_URL ??
         'http://localhost:4000/api/auth/google/callback',
       scope: ['email', 'profile'],
+      // La app usa JWT stateless — no hay session para almacenar el state CSRF.
+      // Deshabilitarlo evita que Passport falle al intentar req.session.state.
+      state: false,
     });
   }
 
