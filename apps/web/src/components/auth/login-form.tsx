@@ -56,8 +56,7 @@ export function LoginForm() {
       });
 
       toast.success('Sesión iniciada correctamente');
-      router.push('/dashboard');
-      router.refresh();
+      window.location.href = '/dashboard';
     } catch (error) {
       toast.error(
         error instanceof Error
