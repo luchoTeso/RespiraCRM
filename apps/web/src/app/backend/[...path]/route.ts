@@ -65,10 +65,22 @@ async function handler(
   // Construir headers de respuesta (incluye Set-Cookie)
   const responseHeaders = new Headers();
   upstreamRes.headers.forEach((value, key) => {
-    if (!SKIP_RESPONSE_HEADERS.has(key.toLowerCase())) {
+    // Set-Cookie se maneja por separado más abajo
+    if (
+      !SKIP_RESPONSE_HEADERS.has(key.toLowerCase()) &&
+      key.toLowerCase() !== 'set-cookie'
+    ) {
       responseHeaders.append(key, value);
     }
   });
+
+  // Set-Cookie necesita tratamiento especial: Headers.forEach() concatena
+  // múltiples Set-Cookie en una sola línea separada por comas, lo cual el
+  // navegador rechaza. getSetCookie() los devuelve como array individual.
+  const setCookies = upstreamRes.headers.getSetCookie?.() ?? [];
+  for (const cookie of setCookies) {
+    responseHeaders.append('set-cookie', cookie);
+  }
 
   // Redireccionamientos (OAuth initiate → Google, OAuth callback → /dashboard)
   if (upstreamRes.status >= 300 && upstreamRes.status < 400) {
@@ -76,7 +88,7 @@ async function handler(
     const redirectRes = NextResponse.redirect(location, {
       status: upstreamRes.status,
     });
-    // Copiar Set-Cookie y demás headers al redirect (OAuth callback setea cookies Y redirige)
+    // Copiar headers al redirect (OAuth callback setea cookies Y redirige)
     responseHeaders.forEach((value, key) => {
       redirectRes.headers.append(key, value);
     });
