@@ -196,7 +196,7 @@ export function LoginForm() {
           </div>
 
           <Link
-            href="/backend/api/auth/google"
+            href="/api/auth/google"
             className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-muted"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">

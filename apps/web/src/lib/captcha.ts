@@ -13,5 +13,6 @@ export function getApiBaseUrl() {
       'http://localhost:4000'
     );
   }
-  return '/backend';
+  // Cadena vacía = mismo origen; apiRequest agrega /api internamente
+  return '';
 }
